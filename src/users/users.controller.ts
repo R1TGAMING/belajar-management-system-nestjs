@@ -12,6 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 
 @Controller('users')
 export class UsersController {
@@ -58,18 +59,74 @@ export class UsersController {
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':email')
+  async findOne(@Param('email') email: string) {
+    try {
+      const res = await this.usersService.findOne(email);
+      return {
+        status: HttpStatus.OK,
+        message: 'success',
+        data: res,
+      };
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e instanceof Error) {
+        throw e;
+      }
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(':email')
+  async update(
+    @Param('email') email: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    try {
+      const res = await this.usersService.update(email, updateUserDto);
+      return {
+        status: HttpStatus.OK,
+        message: 'success',
+        data: res,
+      };
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw e;
+      }
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e instanceof Error) {
+        throw e;
+      }
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete(':email')
+  async remove(@Param('email') email: string) {
+    try {
+      const res = await this.usersService.remove(email);
+      return {
+        status: HttpStatus.OK,
+        message: 'success',
+        data: res,
+      };
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw e;
+      }
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e instanceof Error) {
+        throw e;
+      }
+    }
   }
 }
